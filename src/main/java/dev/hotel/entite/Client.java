@@ -6,8 +6,11 @@ import javax.persistence.Entity;
 public class Client extends BaseEntite {
 
 
+//	@NotBlank
+//	@Size(min=2)
     private String nom;
 
+//	@Size(min=2)
     private String prenoms;
 
     public Client() {
