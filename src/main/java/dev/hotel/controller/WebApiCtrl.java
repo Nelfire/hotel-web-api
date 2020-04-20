@@ -9,6 +9,8 @@ import javax.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -99,14 +101,24 @@ public class WebApiCtrl {
 	 */
 //	@RequestMapping(method = RequestMethod.POST)
 	@PostMapping
-	public ResponseEntity<?> ajouterClient(@RequestBody @Valid Client client) {
+	public ResponseEntity<?> ajouterClient(@Valid @RequestBody Client client, BindingResult result) {
 		
 		if(client.getNom().length() <3 || client.getPrenoms().length() <3 ) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).header("Cas passant","Erreur , plus de 2 caracteres necessaire !").build();
 		} else {
-			return ResponseEntity.status(HttpStatus.ACCEPTED).header("Cas non passant","Client valide").build();
+			return ResponseEntity.ok(creerClient(client.getNom(), client.getPrenoms()));
 		}
 
+	}
+	
+	@Transactional
+	public Client creerClient(String nom, String prenoms) {
+
+		Client c = new Client(nom, prenoms);
+
+		clientRepository.save(c);
+
+		return c;
 	}
 	
 }
